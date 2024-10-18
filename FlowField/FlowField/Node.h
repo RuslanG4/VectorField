@@ -24,9 +24,11 @@ public:
 		if(_state == NodeState::OBSTACLE)
 		{
 			drawableNode.setFillColor(sf::Color::Black);
+			currentState = _state;
 		} else
 		{
 			drawableNode.setFillColor(sf::Color::Blue);
+			currentState = _state;
 		}
 	};
 
@@ -34,18 +36,21 @@ public:
 	std::vector<int>& neighbours() { return m_neighbours; }
 
 	void setState(NodeState _state);
-
+	void setID(int _id) { m_id = _id; };
 
 
 	sf::RectangleShape drawableNode; //sfml render
 
-
-
 private:
+	int m_id;
+
 	std::vector<int> m_neighbours;
+
 	int gridX; //position x
 	int gridY; //position y
+
 	sf::Vector2f midPoint;
+
 	NodeState currentState;
 };
 
