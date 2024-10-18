@@ -20,6 +20,12 @@ public:
 				nodeGrid.push_back(Node(NodeState::WALKABLE, j * gridNodeSize, i * gridNodeSize, gridNodeSize)); //pushes a new node with passable and x and y and gives id
 			}
 		}
+		//Setup id's first
+		int max = rows * cols;
+		for (int i = 0; i < max; i++)
+		{
+			nodeGrid[i].setID(i);
+		}
 
 	};
 	void drawGrid(sf::RenderWindow& _window);

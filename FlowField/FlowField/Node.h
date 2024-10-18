@@ -35,17 +35,17 @@ public:
 
 	void setState(NodeState _state);
 
-	int gridX; //position x
-	int gridY; //position y
+
 
 	sf::RectangleShape drawableNode; //sfml render
 
-	NodeState currentState;
+
 
 private:
 	std::vector<int> m_neighbours;
-
+	int gridX; //position x
+	int gridY; //position y
 	sf::Vector2f midPoint;
-	
+	NodeState currentState;
 };
 
