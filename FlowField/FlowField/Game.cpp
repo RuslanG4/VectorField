@@ -63,17 +63,9 @@ void Game::processEvents()
 		}
 		if (sf::Event::MouseButtonPressed == newEvent.type) //user pressed mouse
 		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			if(sf::Event::MouseButtonPressed == newEvent.type)
 			{
-				processLeftMouse(newEvent);
-			}
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-			{
-				processRightMouse(newEvent);
-			}
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
-			{
-				processMiddleMouse(newEvent);
+				processMouseDown(newEvent);
 			}
 		}
 		if (sf::Event::MouseButtonReleased == newEvent.type)
@@ -93,38 +85,27 @@ void Game::processKeys(sf::Event t_event)
 
 }
 
-void Game::processLeftMouse(sf::Event t_event)
+void Game::processMouseDown(sf::Event t_event)
 {
 	if (canClick)
 	{
 		click.x = t_event.mouseButton.x / myGrid.getNodeSize();
 		click.y = t_event.mouseButton.y / myGrid.getNodeSize();
 		int nodeNum = click.x + (click.y * (SCREEN_HEIGHT / myGrid.getNodeSize()));
-		myGrid.updateNodes(nodeNum, NodeState::START);
-		canClick = false;
-	}
-}
 
-void Game::processRightMouse(sf::Event t_event)
-{
-	if (canClick)
-	{
-		click.x = t_event.mouseButton.x / myGrid.getNodeSize();
-		click.y = t_event.mouseButton.y / myGrid.getNodeSize();
-		int nodeNum = click.x + (click.y * (SCREEN_HEIGHT / myGrid.getNodeSize()));
-		myGrid.updateNodes(nodeNum, NodeState::END);
-		canClick = false;
-	}
-}
+		switch (t_event.mouseButton.button)
+		{
+		case sf::Mouse::Left:
+			myGrid.updateNodes(nodeNum, NodeState::START);
+			break;
+		case sf::Mouse::Right:
+			myGrid.updateNodes(nodeNum, NodeState::END);
+			break;
+		case sf::Mouse::Middle:
+			myGrid.updateNodes(nodeNum, NodeState::OBSTACLE);
+			break;
+		}
 
-void Game::processMiddleMouse(sf::Event t_event)
-{
-	if (canClick)
-	{
-		click.x = t_event.mouseButton.x / myGrid.getNodeSize();
-		click.y = t_event.mouseButton.y / myGrid.getNodeSize();
-		int nodeNum = click.x + (click.y * (SCREEN_HEIGHT / myGrid.getNodeSize()));
-		myGrid.updateNodes(nodeNum, NodeState::OBSTACLE);
 		canClick = false;
 	}
 }

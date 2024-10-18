@@ -20,9 +20,7 @@ private:
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
-	void processLeftMouse(sf::Event t_event);
-	void processRightMouse(sf::Event t_event);
-	void processMiddleMouse(sf::Event t_event);
+	void processMouseDown(sf::Event t_event);
 	void processMouseUp(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
