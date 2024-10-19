@@ -45,6 +45,7 @@ private:
 
 	bool startJourney;
 	void updatePlayer();
+	void updateBall();
 };
 
 #endif // !GAME_HPP

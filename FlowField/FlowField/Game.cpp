@@ -106,6 +106,7 @@ void Game::processMouseDown(sf::Event t_event)
 		{
 		case sf::Mouse::Left:
 			myGrid->updateNodes(nodeNum, NodeState::START);
+			player.body.setPosition(myGrid->getNode(nodeNum));
 			myGrid->resetNodes();
 			myGrid->pathFind();
 			break;
@@ -141,7 +142,8 @@ void Game::update(sf::Time t_deltaTime)
 {
 	if(startJourney)
 	{
-		updatePlayer();
+		//updatePlayer();
+		updateBall();
 	}
 }
 
@@ -152,11 +154,11 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 	myGrid->drawGrid(m_window);
-	//player.render(m_window);
-	for (int i = 0; i < 15; i++)
+	player.render(m_window);
+	/*for (int i = 0; i < 15; i++)
 	{
 		balls[i].render(m_window);
-	}
+	}*/
 	m_window.display();
 }
 
@@ -188,3 +190,23 @@ void Game::updatePlayer()
 		balls[i].update();
 	}
 }
+
+void Game::updateBall()
+{
+	sf::Vector2f currentPos;
+	currentPos.x = static_cast<int>(player.body.getPosition().x / 20);
+	currentPos.y = static_cast<int>(player.body.getPosition().y / 20);
+	int currentNode = currentPos.x + (currentPos.y * (SCREEN_HEIGHT / 20));
+
+	sf::Vector2f distVec = myGrid->getNode(currentNode) - player.body.getPosition();
+	float dist = Utility::magnitude(distVec.x, distVec.y);
+
+	if (dist < 1)
+	{
+		player.currVelocity = myGrid->getNodeVelocity(currentNode);
+	}
+
+	player.update();
+}
+
+
