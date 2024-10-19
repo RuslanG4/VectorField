@@ -5,34 +5,22 @@
 class Grid
 {
 public:
-	Grid()
+	Grid(sf::Font& _font)
 	{
-		createGrid();
+		createGrid(_font);
 	};
-	void createGrid() //creates grid, use on initialise 
-	{
-		int rows = SCREEN_HEIGHT / gridNodeSize;  //identifies the amount of rows
-		int cols = SCREEN_WIDTH / gridNodeSize;  //identifies the amount of columns
-		for (int i = 0; i < rows; i++)
-		{
-			for (int j = 0; j < cols; j++)
-			{
-				nodeGrid.push_back(Node(NodeState::WALKABLE, j * gridNodeSize, i * gridNodeSize, gridNodeSize)); //pushes a new node with passable and x and y and gives id
-			}
-		}
-		//Setup id's first
-		int max = rows * cols;
-		for (int i = 0; i < max; i++)
-		{
-			nodeGrid[i].setID(i);
-		}
-
-	};
+	void createGrid(sf::Font& _font);
 	void drawGrid(sf::RenderWindow& _window);
 	void updateNodes(int _nodeNumber, NodeState _updatedState);
-	int const getNodeSize() { return gridNodeSize; };
+	void addNeighbours(int _currentNodeId);
+	int const getNodeSize() const { return gridNodeSize; };
+
+	void pathFind();
+	void calculateVectors(Node* _currentNode);
+	void drawPath(sf::Color _col);
+	void resetNodes();
 private:
-	std::vector<Node> nodeGrid;
+	std::vector<Node*> nodeGrid;
 
 	int currentStartNode{ -1 };
 	int currentEndNode{ -1 };

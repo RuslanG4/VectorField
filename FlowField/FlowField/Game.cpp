@@ -10,6 +10,7 @@ Game::Game() :
 	m_window{ sf::VideoMode{ SCREEN_WIDTH, SCREEN_HEIGHT, 32U }, "SFML Game" }
 {
 	initialise();
+	myGrid = new Grid(myFont);
 }
 
 /// <summary>
@@ -89,20 +90,27 @@ void Game::processMouseDown(sf::Event t_event)
 {
 	if (canClick)
 	{
-		click.x = t_event.mouseButton.x / myGrid.getNodeSize();
-		click.y = t_event.mouseButton.y / myGrid.getNodeSize();
-		int nodeNum = click.x + (click.y * (SCREEN_HEIGHT / myGrid.getNodeSize()));
+		click.x = t_event.mouseButton.x / myGrid->getNodeSize();
+		click.y = t_event.mouseButton.y / myGrid->getNodeSize();
+		int nodeNum = click.x + (click.y * (SCREEN_HEIGHT / myGrid->getNodeSize()));
 
 		switch (t_event.mouseButton.button)
 		{
 		case sf::Mouse::Left:
-			myGrid.updateNodes(nodeNum, NodeState::START);
+			myGrid->updateNodes(nodeNum, NodeState::START);
+			myGrid->resetNodes();
+			myGrid->pathFind();
 			break;
 		case sf::Mouse::Right:
-			myGrid.updateNodes(nodeNum, NodeState::END);
+			myGrid->updateNodes(nodeNum, NodeState::END);
+			myGrid->resetNodes();
+			myGrid->pathFind();
 			break;
 		case sf::Mouse::Middle:
-			myGrid.updateNodes(nodeNum, NodeState::OBSTACLE);
+			myGrid->drawPath(sf::Color::Blue);
+			myGrid->updateNodes(nodeNum, NodeState::OBSTACLE);
+			myGrid->resetNodes();
+			myGrid->pathFind();
 			break;
 		}
 
@@ -131,11 +139,14 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::White);
-	myGrid.drawGrid(m_window);
+	myGrid->drawGrid(m_window);
 	m_window.display();
 }
 
 void Game::initialise()
 {
-
+	if(!myFont.loadFromFile(FONT_PATH))
+	{
+		std::cout << "error loading font";
+	}
 }

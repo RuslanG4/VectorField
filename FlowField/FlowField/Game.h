@@ -29,9 +29,11 @@ private:
 	sf::Sprite m_appleSprite;
 	sf::Texture m_appleTexture;
 
+	sf::Font myFont;
+
 	sf::RenderWindow m_window; // main SFML window
 
-	Grid myGrid;
+	Grid* myGrid;
 
 	bool canClick = true;
 	sf::Vector2f click;

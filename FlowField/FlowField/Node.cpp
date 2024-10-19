@@ -22,3 +22,25 @@ void Node::setState(NodeState _state)
 		break;
 	}
 }
+
+void Node::updatePath(sf::Color _col)
+{
+	drawableNode.setFillColor(_col);
+}
+
+void Node::calculatePoints()
+{
+	m_points.setPrimitiveType(sf::Lines); //sets line
+	m_points.clear(); //only draws one line
+
+	sf::Vertex m_start;
+	m_start.color = sf::Color::Black;
+	m_start.position = midPoint;    //start line at origin of ball
+	m_points.append(m_start);
+
+	sf::Vertex newVertrex;
+	newVertrex.color = sf::Color::Black;
+	newVertrex.position.x = (pathVector.x * 10) + midPoint.x;    //end line
+	newVertrex.position.y = (pathVector.y * 10) + midPoint.y;
+	m_points.append(newVertrex);
+}
