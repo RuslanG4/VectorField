@@ -19,6 +19,9 @@ public:
 	void calculateVectors(Node* _currentNode);
 	void drawPath(sf::Color _col);
 	void resetNodes();
+
+	sf::Vector2f getNodeVelocity(int _NodeNum) { return nodeGrid[_NodeNum]->pathVector; };
+	sf::Vector2f getNode(int _NodeNum) { return nodeGrid[_NodeNum]->midPoint; };
 private:
 	std::vector<Node*> nodeGrid;
 

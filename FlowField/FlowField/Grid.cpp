@@ -25,7 +25,7 @@ void Grid::drawGrid(sf::RenderWindow& _window)
 	for(auto node : nodeGrid)
 	{
 		_window.draw(node->drawableNode);
-		//_window.draw(node->nodeCostText);
+		_window.draw(node->nodeCostText);
 		_window.draw(node->m_points);
 	}
 }
@@ -38,10 +38,6 @@ void Grid::updateNodes(int _nodeNumber, NodeState _updatedState)
 		{
 			currentEndNode = _nodeNumber;
 		}
-		if (currentStartNode != -1)
-		{
-			drawPath(sf::Color::Blue);
-		}
 		nodeGrid[currentEndNode]->setState(NodeState::WALKABLE);
 		currentEndNode = _nodeNumber;
 	}
@@ -50,10 +46,6 @@ void Grid::updateNodes(int _nodeNumber, NodeState _updatedState)
 		if (currentStartNode == -1)
 		{
 			currentStartNode = _nodeNumber;
-		}
-		if (currentEndNode != -1)
-		{
-			drawPath(sf::Color::Blue);
 		}
 		nodeGrid[currentStartNode]->setState(NodeState::WALKABLE);
 		currentStartNode = _nodeNumber;
@@ -121,6 +113,14 @@ void Grid::pathFind()
 					calculateVectors(neighbour);
 					neighbour->calculatePoints();
 
+					float normCost = static_cast<float>(neighbour->getCost()) / 80.0f;
+					sf::Color color = sf::Color(
+						static_cast<sf::Uint8>(255 * normCost),  // Red
+						static_cast<sf::Uint8>(255 * (1.0f - normCost)),  // Green
+						0);  // No Blue
+
+					neighbour->drawableNode.setFillColor(color);
+
 					nodeQueue.push(neighbour);
 				}
 			}
@@ -147,6 +147,7 @@ void Grid::calculateVectors(Node* _currentNode)
 void Grid::drawPath(sf::Color _col)
 {
 	if (currentStartNode != -1 && currentEndNode != -1) {
+		nodeGrid[currentStartNode]->drawableNode.setFillColor(sf::Color::Blue);
 		Node* endNode = nodeGrid[currentStartNode]->getPrevious();
 
 		while (endNode != nullptr)

@@ -5,7 +5,7 @@ void Node::setState(NodeState _state)
 	switch (_state)
 	{
 	case NodeState::WALKABLE:
-		drawableNode.setFillColor(sf::Color::Blue);
+		drawableNode.setFillColor(sf::Color::Green);
 		currentState = _state;
 		break;
 	case NodeState::OBSTACLE:
@@ -13,7 +13,7 @@ void Node::setState(NodeState _state)
 		currentState = _state;
 		break;
 	case NodeState::START:
-		drawableNode.setFillColor(sf::Color::Green);
+		drawableNode.setFillColor(sf::Color::Blue);
 		currentState = _state;
 		break;
 	case NodeState::END:

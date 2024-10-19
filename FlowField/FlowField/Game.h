@@ -5,6 +5,7 @@
 #include <iostream>
 #include"Constants.h"
 #include "Grid.h"
+#include"Ball.h"
 
 class Game
 {
@@ -37,6 +38,13 @@ private:
 
 	bool canClick = true;
 	sf::Vector2f click;
+
+	Ball player;
+
+	Ball balls[15];
+
+	bool startJourney;
+	void updatePlayer();
 };
 
 #endif // !GAME_HPP

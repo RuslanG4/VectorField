@@ -11,6 +11,14 @@ Game::Game() :
 {
 	initialise();
 	myGrid = new Grid(myFont);
+	for (int i = 0; i < 15; i++)
+	{
+		int x = (std::rand() % 50 + 1);
+		int y = (std::rand() % 50 + 1);
+		int currentNode = x * y;
+
+		balls[i].body.setPosition(myGrid->getNode(currentNode));
+	}
 }
 
 /// <summary>
@@ -105,6 +113,7 @@ void Game::processMouseDown(sf::Event t_event)
 			myGrid->updateNodes(nodeNum, NodeState::END);
 			myGrid->resetNodes();
 			myGrid->pathFind();
+			startJourney = true;
 			break;
 		case sf::Mouse::Middle:
 			myGrid->drawPath(sf::Color::Blue);
@@ -130,7 +139,10 @@ void Game::processMouseUp(sf::Event t_event)
 /// <param name="t_deltaTime">time interval per frame</param>
 void Game::update(sf::Time t_deltaTime)
 {
-
+	if(startJourney)
+	{
+		updatePlayer();
+	}
 }
 
 /// <summary>
@@ -140,6 +152,11 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 	myGrid->drawGrid(m_window);
+	//player.render(m_window);
+	for (int i = 0; i < 15; i++)
+	{
+		balls[i].render(m_window);
+	}
 	m_window.display();
 }
 
@@ -148,5 +165,26 @@ void Game::initialise()
 	if(!myFont.loadFromFile(FONT_PATH))
 	{
 		std::cout << "error loading font";
+	}
+	
+}
+
+void Game::updatePlayer()
+{
+	for (int i = 0; i < 15; i++) {
+		sf::Vector2f currentPos;
+		currentPos.x = static_cast<int>(balls[i].body.getPosition().x / 20);
+		currentPos.y = static_cast<int>(balls[i].body.getPosition().y / 20);
+		int currentNode = currentPos.x + (currentPos.y * (SCREEN_HEIGHT / 20));
+
+		sf::Vector2f distVec = myGrid->getNode(currentNode) - balls[i].body.getPosition();
+		float dist = Utility::magnitude(distVec.x, distVec.y);
+
+		if (dist < 1 )
+		{
+			balls[i].currVelocity = myGrid->getNodeVelocity(currentNode);
+		}
+
+		balls[i].update();
 	}
 }

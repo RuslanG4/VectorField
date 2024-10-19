@@ -38,7 +38,7 @@ public:
 			currentState = _state;
 		} else
 		{
-			drawableNode.setFillColor(sf::Color::Blue);
+			drawableNode.setFillColor(sf::Color::Green);
 			currentState = _state;
 		}
 	};
