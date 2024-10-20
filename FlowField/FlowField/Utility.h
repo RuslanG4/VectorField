@@ -11,6 +11,14 @@ namespace Utility
 
 	sf::Vector2f truncate(sf::Vector2f v, float const max);
 
+	struct Vector2fCompare {
+		bool operator()(const sf::Vector2f& lhs, const sf::Vector2f& rhs) const {
+			if (lhs.x != rhs.x)
+				return lhs.x < rhs.x;
+			return lhs.y < rhs.y;
+		}
+	};
+
 	float dotProduct(sf::Vector2f v1, sf::Vector2f v2);
 };
 

@@ -52,6 +52,7 @@ void Grid::updateNodes(int _nodeNumber, NodeState _updatedState)
 
 	}
 	nodeGrid[_nodeNumber]->setState(_updatedState);
+	resetNodes();
 }
 
 void Grid::addNeighbours(int _currentNodeId)
@@ -83,16 +84,13 @@ void Grid::addNeighbours(int _currentNodeId)
 
 void Grid::pathFind()
 {
-	if (currentStartNode != -1 && currentEndNode != -1)
+	if (currentEndNode != -1)
 	{
 		std::queue<Node*> nodeQueue;
-		Node* prevNode = nullptr;
 
+		nodeGrid[currentEndNode]->goalCost();
 		nodeQueue.push(nodeGrid[currentEndNode]);
 		nodeGrid[currentEndNode]->setMarked();
-
-		nodeQueue.front()->setPrevious(prevNode);
-		prevNode = nodeQueue.front();
 
 		// loop through the queue while there are nodes in it.
 		while (nodeQueue.size() != 0)
@@ -108,10 +106,6 @@ void Grid::pathFind()
 					// mark the node and add it to the queue.
 					neighbour->setMarked();
 					neighbour->updateCost(nodeQueue.front()->getCost());
-					neighbour->setPrevious(prevNode);
-
-					calculateVectors(neighbour);
-					neighbour->calculatePoints();
 
 					float normCost = static_cast<float>(neighbour->getCost()) / 80.0f;
 					sf::Color color = sf::Color(
@@ -120,48 +114,93 @@ void Grid::pathFind()
 						0);  // No Blue
 
 					neighbour->drawableNode.setFillColor(color);
-
 					nodeQueue.push(neighbour);
 				}
 			}
-
 			// dequeue the current node.
 			nodeQueue.pop();
-			if (nodeQueue.size() != 0) {
-				prevNode = nodeQueue.front();
-			}
-
 		}
-		drawPath(sf::Color::Yellow);
+		for (auto node : nodeGrid) {
+			node->pathVector = calculateVectors(node);
+			node->calculatePoints();
+		}
+		if (currentStartNode != -1) {
+			drawPath(sf::Color::Yellow);
+		}
 	}
 
 }
 
-void Grid::calculateVectors(Node* _currentNode)
+sf::Vector2f Grid::calculateVectors(Node* _node)
 {
-	sf::Vector2f heading = _currentNode->getPrevious()->midPoint - _currentNode->midPoint;
-	heading = Utility::unitVector2D(heading);
-	_currentNode->pathVector = heading;
+	sf::Vector2f bestDirection(0.0f, 0.0f);
+	int lowestCost = _node->getCost();
+
+	for(auto neighbour : _node->getNeighbours())
+	{
+		if(neighbour->getCost() < lowestCost)
+		{
+			lowestCost = neighbour->getCost();
+
+			bestDirection.x = neighbour->getID() % 50 - _node->getID() % 50;
+			bestDirection.y = neighbour->getID() / 50 - _node->getID() / 50;
+		}
+	}
+	if (bestDirection.x != 0 || bestDirection.y != 0) {
+		bestDirection = Utility::unitVector2D(bestDirection);
+	}
+
+	return bestDirection;
 }
 
 void Grid::drawPath(sf::Color _col)
 {
-	if (currentStartNode != -1 && currentEndNode != -1) {
 		nodeGrid[currentStartNode]->drawableNode.setFillColor(sf::Color::Blue);
-		Node* endNode = nodeGrid[currentStartNode]->getPrevious();
+		int currentNode = currentStartNode;
+		sf::Vector2f currentNodeVector = nodeGrid[currentStartNode]->pathVector;
 
-		while (endNode != nullptr)
+		//calculateVectors
+
+		while (currentNodeVector != sf::Vector2f(0,0))
 		{
-			if(endNode->getPrevious() == nullptr)
+			if(currentNodeVector == sf::Vector2f(1,0))
 			{
-				endNode->pathVector = sf::Vector2f(0, 0);
-				endNode->calculatePoints();
-				break;
+				currentNode = currentNode + 1;
 			}
-			endNode->updatePath(_col);
-			endNode = endNode->getPrevious();
+			else if(currentNodeVector == sf::Vector2f(0, 1))
+			{
+				currentNode = currentNode + 50;
+			}
+			else if (currentNodeVector == sf::Vector2f(-1, 0))
+			{
+				currentNode = currentNode - 1;
+			}
+			else if (currentNodeVector == sf::Vector2f(0, -1))
+			{
+				currentNode = currentNode - 50;
+			}
+			else if((currentNodeVector.x < 1 && currentNodeVector.x > 0) && (currentNodeVector.y < 1 && currentNodeVector.y > 0))
+			{
+				currentNode = currentNode + 51;
+			}
+			else if ((currentNodeVector.x < 0) && (currentNodeVector.y < 1 && currentNodeVector.y > 0))
+			{
+				currentNode = currentNode + 49;
+			}
+			else if ((currentNodeVector.x < 0) && (currentNodeVector.y <0))
+			{
+				currentNode = currentNode -51;
+			}
+			else if ((currentNodeVector.x < 1 && currentNodeVector.x > 0) && (currentNodeVector.y <0))
+			{
+				currentNode = currentNode -49;
+			}
+
+			nodeGrid[currentNode]->drawableNode.setFillColor(sf::Color::Yellow);
+			currentNodeVector = nodeGrid[currentNode]->pathVector;
+
 		}
-	}
+		nodeGrid[currentEndNode]->drawableNode.setFillColor(sf::Color::Red);
 }
 
 void Grid::resetNodes()

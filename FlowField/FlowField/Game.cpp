@@ -13,11 +13,10 @@ Game::Game() :
 	myGrid = new Grid(myFont);
 	for (int i = 0; i < 15; i++)
 	{
-		int x = (std::rand() % 50 + 1);
-		int y = (std::rand() % 50 + 1);
-		int currentNode = x * y;
+		int x = (std::rand() % SCREEN_WIDTH + 1 );
+		int y = (std::rand() % SCREEN_HEIGHT + 1);
 
-		balls[i].body.setPosition(myGrid->getNode(currentNode));
+		balls[i].body.setPosition(sf::Vector2f(x,y));
 	}
 }
 
@@ -107,19 +106,15 @@ void Game::processMouseDown(sf::Event t_event)
 		case sf::Mouse::Left:
 			myGrid->updateNodes(nodeNum, NodeState::START);
 			player.body.setPosition(myGrid->getNode(nodeNum));
-			myGrid->resetNodes();
 			myGrid->pathFind();
 			break;
 		case sf::Mouse::Right:
 			myGrid->updateNodes(nodeNum, NodeState::END);
-			myGrid->resetNodes();
 			myGrid->pathFind();
 			startJourney = true;
 			break;
 		case sf::Mouse::Middle:
-			myGrid->drawPath(sf::Color::Blue);
 			myGrid->updateNodes(nodeNum, NodeState::OBSTACLE);
-			myGrid->resetNodes();
 			myGrid->pathFind();
 			break;
 		}
@@ -174,29 +169,21 @@ void Game::initialise()
 void Game::updatePlayer()
 {
 	for (int i = 0; i < 15; i++) {
-		sf::Vector2f currentPos;
-		currentPos.x = static_cast<int>(balls[i].body.getPosition().x / 20);
-		currentPos.y = static_cast<int>(balls[i].body.getPosition().y / 20);
-		int currentNode = currentPos.x + (currentPos.y * (SCREEN_HEIGHT / 20));
 
-		sf::Vector2f distVec = myGrid->getNode(currentNode) - balls[i].body.getPosition();
-		float dist = Utility::magnitude(distVec.x, distVec.y);
+		int x = static_cast<int>(balls[i].body.getPosition().x / myGrid->getNodeSize());
+		int y = static_cast<int>(balls[i].body.getPosition().y / myGrid->getNodeSize());
+		int currentNode = x + (y * 50);
 
-		if (dist < 1 )
-		{
-			balls[i].currVelocity = myGrid->getNodeVelocity(currentNode);
-		}
-
+		balls[i].currVelocity = myGrid->getNodeVelocity(currentNode);
 		balls[i].update();
 	}
 }
 
 void Game::updateBall()
 {
-	sf::Vector2f currentPos;
-	currentPos.x = static_cast<int>(player.body.getPosition().x / 20);
-	currentPos.y = static_cast<int>(player.body.getPosition().y / 20);
-	int currentNode = currentPos.x + (currentPos.y * (SCREEN_HEIGHT / 20));
+	int x = static_cast<int>(player.body.getPosition().x / myGrid->getNodeSize());
+	int y = static_cast<int>(player.body.getPosition().y / myGrid->getNodeSize());
+	int currentNode = x + (y * 50);
 
 	sf::Vector2f distVec = myGrid->getNode(currentNode) - player.body.getPosition();
 	float dist = Utility::magnitude(distVec.x, distVec.y);

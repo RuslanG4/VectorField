@@ -16,12 +16,14 @@ public:
 	int const getNodeSize() const { return gridNodeSize; };
 
 	void pathFind();
-	void calculateVectors(Node* _currentNode);
+	sf::Vector2f calculateVectors(Node* _node);
 	void drawPath(sf::Color _col);
 	void resetNodes();
 
 	sf::Vector2f getNodeVelocity(int _NodeNum) { return nodeGrid[_NodeNum]->pathVector; };
 	sf::Vector2f getNode(int _NodeNum) { return nodeGrid[_NodeNum]->midPoint; };
+
+	int getEndNodeID() { return currentEndNode; };
 private:
 	std::vector<Node*> nodeGrid;
 
