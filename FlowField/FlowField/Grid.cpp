@@ -34,7 +34,7 @@ void Grid::updateNodes(int _nodeNumber, NodeState _updatedState)
 {
 	if(currentEndNode != _nodeNumber && _updatedState == NodeState::END)
 	{
-		if(currentEndNode == -1)
+		if(currentEndNode == -1) //emd node not set
 		{
 			currentEndNode = _nodeNumber;
 		}
@@ -43,7 +43,7 @@ void Grid::updateNodes(int _nodeNumber, NodeState _updatedState)
 	}
 	else if(currentStartNode != _nodeNumber && _updatedState == NodeState::START)
 	{
-		if (currentStartNode == -1)
+		if (currentStartNode == -1) //start node not set
 		{
 			currentStartNode = _nodeNumber;
 		}
@@ -95,8 +95,6 @@ void Grid::pathFind()
 		// loop through the queue while there are nodes in it.
 		while (nodeQueue.size() != 0)
 		{
-			// add all of the child nodes that have not been 
-			// marked into the queue
 			auto neighbours = nodeQueue.front()->getNeighbours();
 
 			for (auto neighbour : neighbours)
@@ -107,6 +105,7 @@ void Grid::pathFind()
 					neighbour->setMarked();
 					neighbour->updateCost(nodeQueue.front()->getCost());
 
+					//for heat map
 					float normCost = static_cast<float>(neighbour->getCost()) / 80.0f;
 					sf::Color color = sf::Color(
 						static_cast<sf::Uint8>(255 * normCost),  // Red
@@ -134,7 +133,7 @@ void Grid::pathFind()
 sf::Vector2f Grid::calculateVectors(Node* _node)
 {
 	sf::Vector2f bestDirection(0.0f, 0.0f);
-	int lowestCost = _node->getCost();
+	int lowestCost = _node->getCost(); //current node for cost
 
 	for(auto neighbour : _node->getNeighbours())
 	{
@@ -142,8 +141,8 @@ sf::Vector2f Grid::calculateVectors(Node* _node)
 		{
 			lowestCost = neighbour->getCost();
 
-			bestDirection.x = neighbour->getID() % 50 - _node->getID() % 50;
-			bestDirection.y = neighbour->getID() / 50 - _node->getID() / 50;
+			bestDirection.x = neighbour->getID() % 50 - _node->getID() % 50; //50 is amount of nodes per row
+			bestDirection.y = neighbour->getID() / 50 - _node->getID() / 50; //50 amount of nodes per col
 		}
 	}
 	if (bestDirection.x != 0 || bestDirection.y != 0) {
@@ -153,6 +152,7 @@ sf::Vector2f Grid::calculateVectors(Node* _node)
 	return bestDirection;
 }
 
+//function kind of messy but only for drawing path
 void Grid::drawPath(sf::Color _col)
 {
 		nodeGrid[currentStartNode]->drawableNode.setFillColor(sf::Color::Blue);

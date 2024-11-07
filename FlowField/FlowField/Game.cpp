@@ -166,6 +166,7 @@ void Game::initialise()
 	
 }
 
+//ignore ( multiple players ) 
 void Game::updatePlayer()
 {
 	for (int i = 0; i < 15; i++) {
@@ -179,6 +180,7 @@ void Game::updatePlayer()
 	}
 }
 
+//updating player 
 void Game::updateBall()
 {
 	int x = static_cast<int>(player.body.getPosition().x / myGrid->getNodeSize());

@@ -18,8 +18,10 @@ void Ball::render(sf::RenderWindow& window)
 
 void Ball::init()
 {
-	body.setRadius(4.f);
-	body.setOrigin(4, 4);
+	body.setRadius(8.f);
+	body.setOrigin(8, 8);
+	body.setOutlineColor(sf::Color::Yellow);
+	body.setOutlineThickness(2);
 	body.setFillColor(sf::Color::Magenta);
 }
 
